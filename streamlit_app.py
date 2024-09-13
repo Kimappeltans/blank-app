@@ -8,7 +8,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-st.title("🤗 Live Transformer Demo")
+st.title("🤗 AD577 AI class Transformer Demo")
 st.write("This app uses a transformer model to perform NLP tasks.")
 
 # Display your Streamlit Cloud app URL

@@ -3,7 +3,7 @@ from transformers import pipeline
 
 # Set up the page configuration
 st.set_page_config(
-    page_title="Live Transformer Demo",
+    page_title="AD577 AI class Transformer Demo",
     layout="centered",
     initial_sidebar_state="collapsed",
 )

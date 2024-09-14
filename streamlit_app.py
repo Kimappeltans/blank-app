@@ -3,44 +3,31 @@ from transformers import pipeline
 
 # Set up the page configuration
 st.set_page_config(
-    page_title="Live Transformer Demo",
+    page_title="NLP Transformer Demo",
     layout="centered",
     initial_sidebar_state="collapsed",
 )
 
-# Add an explanation of the app
-st.title("🤗 Live Transformer Demo")
+# Add a title and description for the app
+st.title("🤗 NLP Transformer Demo")
 st.write("""
-    Welcome to the Live Transformer Demo! This app demonstrates three main NLP tasks using transformer models from Hugging Face:
+    This app demonstrates three main NLP tasks using pre-trained transformer models from Hugging Face:
     
     - **Text Generation**: Automatically generate text based on a starting prompt.
     - **Sentiment Analysis**: Determine if a given text expresses positive or negative sentiment.
     - **Translation**: Translate text from English into multiple languages, including Albanian, German, Russian, Hindi, French, Indonesian, Dutch, Mandarin (Chinese), Cantonese (Traditional Chinese), Spanish, and Portuguese.
     
-    Simply choose a task from the sidebar, enter your text, and click 'Run' to see the results!
+    Select a task from the dropdown menu to get started!
 """)
 
-# Sidebar for selecting the task
-task = st.sidebar.selectbox("Choose a task", [
-    "Text Generation", 
-    "Sentiment Analysis", 
-    "Translation"
-])
+# Sidebar for navigation between tasks
+page = st.sidebar.selectbox("Choose a task", ["Text Generation", "Sentiment Analysis", "Translation"])
 
-# Sidebar for selecting translation language if translation is chosen
-target_language = None
-if task == "Translation":
-    target_language = st.sidebar.selectbox("Select target language", [
-        "Albanian", "German", "Russian", "Hindi", "French", "Indonesian", 
-        "Dutch", "Mandarin (Chinese)", "Cantonese (Traditional Chinese)", 
-        "Spanish", "Portuguese"
-    ])
-
-# Load the appropriate model based on the task and target language
+# Function to load models
 @st.cache_resource
 def load_model(task_name, target_language=None):
     if task_name == "Text Generation":
-        return pipeline("text-generation", model="gpt2")
+        return pipeline("text-generation", model="distilgpt2")  # Lighter model for text generation
     elif task_name == "Sentiment Analysis":
         return pipeline("sentiment-analysis")
     elif task_name == "Translation":
@@ -67,31 +54,73 @@ def load_model(task_name, target_language=None):
         elif target_language == "Portuguese":
             return pipeline("translation_en_to_pt", model="Helsinki-NLP/opus-mt-en-pt")
 
-model = load_model(task, target_language)
-
-# Text input from the user
-user_input = st.text_area("Enter your text here:", height=200)
-
-# Perform the selected task
-if st.button("Run"):
-    if user_input:
-        with st.spinner(f"Performing {task.lower()}..."):
-            if task == "Text Generation":
+# Task 1: Text Generation
+if page == "Text Generation":
+    st.subheader("Text Generation")
+    st.write("Enter a prompt below to generate text.")
+    
+    # Input for text generation
+    user_input = st.text_area("Enter your text prompt here:", height=200)
+    
+    if st.button("Generate Text"):
+        if user_input:
+            # Load the model
+            model = load_model("Text Generation")
+            
+            with st.spinner("Generating text..."):
                 output = model(user_input, max_length=100, num_return_sequences=1)
                 generated_text = output[0]["generated_text"]
                 st.success("Generated Text:")
                 st.write(generated_text)
-            elif task == "Sentiment Analysis":
+        else:
+            st.error("Please enter a text prompt.")
+
+# Task 2: Sentiment Analysis
+elif page == "Sentiment Analysis":
+    st.subheader("Sentiment Analysis")
+    st.write("Enter a sentence or paragraph below to analyze its sentiment.")
+    
+    # Input for sentiment analysis
+    user_input = st.text_area("Enter your text here:", height=200)
+    
+    if st.button("Analyze Sentiment"):
+        if user_input:
+            # Load the model
+            model = load_model("Sentiment Analysis")
+            
+            with st.spinner("Analyzing sentiment..."):
                 result = model(user_input)[0]
                 label = result["label"]
                 score = result["score"]
                 st.success("Sentiment Analysis Result:")
                 st.write(f"**Label**: {label}, **Score**: {score:.4f}")
-            elif task == "Translation":
+        else:
+            st.error("Please enter some text.")
+
+# Task 3: Translation
+elif page == "Translation":
+    st.subheader("Translation")
+    st.write("Enter text below to translate it from English to a selected language.")
+    
+    # Sidebar for selecting translation language
+    target_language = st.sidebar.selectbox("Select target language", [
+        "Albanian", "German", "Russian", "Hindi", "French", "Indonesian", 
+        "Dutch", "Mandarin (Chinese)", "Cantonese (Traditional Chinese)", 
+        "Spanish", "Portuguese"
+    ])
+    
+    # Input for translation
+    user_input = st.text_area("Enter your text here:", height=200)
+    
+    if st.button("Translate Text"):
+        if user_input:
+            # Load the model
+            model = load_model("Translation", target_language)
+            
+            with st.spinner(f"Translating text to {target_language}..."):
                 translation = model(user_input)[0]["translation_text"]
                 st.success(f"Translation (English to {target_language}):")
                 st.write(translation)
-    else:
-        st.error("Please enter some text.")
-
+        else:
+            st.error("Please enter some text.")
 

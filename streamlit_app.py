@@ -14,7 +14,7 @@ st.markdown("""
     
     - 🚀 **Text Generation** for creative text.
     - 🔍 **Sentiment Analysis** for understanding opinions.
-    - 🌐 **Translation** across multiple languages, including Albanian, German, Russian, Hindi, French, Indonesian, Dutch, Mandarin (Chinese), Spanish, and Portuguese.
+    - 🌐 **Translation** across multiple languages, including Albanian, German, Russian, Hindi, French, Indonesian, Dutch, Mandarin (Chinese), Spanish, and Italian.
 
     Simply choose a task below, enter your text, and click 'Run' to see the results!
 """)
@@ -34,7 +34,7 @@ with col1:
     if task == "Translation":
         target_language = st.selectbox("Select language", [
             "Albanian", "German", "Russian", "Hindi", "French", "Indonesian", 
-            "Dutch", "Mandarin (Chinese)", "Spanish", "Portuguese"
+            "Dutch", "Mandarin (Chinese)", "Spanish", "Italian"
         ])
 
     # Text input from the user
@@ -66,8 +66,8 @@ with col1:
                 return pipeline("translation_en_to_zh", model="Helsinki-NLP/opus-mt-en-zh")
             elif target_language == "Spanish":
                 return pipeline("translation_en_to_es", model="Helsinki-NLP/opus-mt-en-es")
-            elif target_language == "Portuguese":
-                return pipeline("translation_en_to_pt", model="Helsinki-NLP/opus-mt-en-pt")
+            elif target_language == "Italian":
+                return pipeline("translation_en_to_it", model="Helsinki-NLP/opus-mt-en-it")
 
     model = load_model(task, target_language)
 
@@ -105,9 +105,5 @@ with col1:
                     st.write(translation)
         else:
             st.error("Please enter some text.")
-
-# Right column for adding visual elements
-with col2:
-    st.image("https://huggingface.co/front/thumbnails/transformers.png", use_column_width=True)
 
 

@@ -32,7 +32,7 @@ target_language = None
 if task == "Translation":
     target_language = st.sidebar.selectbox("Select target language", [
         "Albanian", "German", "Russian", "Hindi", "French", "Indonesian", 
-        "Dutch", "Mandarin (Chinese)", "Cantonese (Traditional Chinese)", 
+        "Dutch", "Mandarin (Chinese)",  
         "Spanish", "Portuguese"
     ])
 

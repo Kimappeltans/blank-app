@@ -15,7 +15,7 @@ st.write("""
     
     - **Text Generation**: Automatically generate text based on a starting prompt.
     - **Sentiment Analysis**: Determine if a given text expresses positive or negative sentiment.
-    - **Translation**: Translate text from English into multiple languages, including Albanian, German, Kazakh, Hindi, French, Indonesian, Dutch, Mandarin (Chinese), Cantonese (Traditional Chinese), Spanish, and Portuguese.
+    - **Translation**: Translate text from English into multiple languages, including Albanian, German, Russian, Hindi, French, Indonesian, Dutch, Mandarin (Chinese), Cantonese (Traditional Chinese), Spanish, and Portuguese.
     
     Simply choose a task from the sidebar, enter your text, and click 'Run' to see the results!
 """)
@@ -31,7 +31,7 @@ task = st.sidebar.selectbox("Choose a task", [
 target_language = None
 if task == "Translation":
     target_language = st.sidebar.selectbox("Select target language", [
-        "Albanian", "German", "Kazakh", "Hindi", "French", "Indonesian", 
+        "Albanian", "German", "Russian", "Hindi", "French", "Indonesian", 
         "Dutch", "Mandarin (Chinese)", "Cantonese (Traditional Chinese)", 
         "Spanish", "Portuguese"
     ])
@@ -48,8 +48,8 @@ def load_model(task_name, target_language=None):
             return pipeline("translation_en_to_sq", model="Helsinki-NLP/opus-mt-en-sq")
         elif target_language == "German":
             return pipeline("translation_en_to_de", model="Helsinki-NLP/opus-mt-en-de")
-        elif target_language == "Kazakh":
-            return pipeline("translation_en_to_kk", model="Helsinki-NLP/opus-mt-en-kk")
+        elif target_language == "Russian":
+            return pipeline("translation_en_to_ru", model="Helsinki-NLP/opus-mt-en-ru")
         elif target_language == "Hindi":
             return pipeline("translation_en_to_hi", model="Helsinki-NLP/opus-mt-en-hi")
         elif target_language == "French":
@@ -93,4 +93,5 @@ if st.button("Run"):
                 st.write(translation)
     else:
         st.error("Please enter some text.")
+
 

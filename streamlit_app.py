@@ -3,22 +3,42 @@ from transformers import pipeline
 
 # Set up the page configuration
 st.set_page_config(
-    page_title="AD577 AI class Transformer Demo",
+    page_title="Live Transformer Demo",
     layout="centered",
     initial_sidebar_state="collapsed",
 )
 
-st.title("🤗 AD577 AI class Transformer Demo")
-st.write("This app uses a transformer model to perform NLP tasks.")
-
-# Display your Streamlit Cloud app URL
-app_url = "https://blank-app-3u33oita2ww.streamlit.app/"
-st.markdown(f"**This app is also available at:** [{app_url}]({app_url})")
+# Add an explanation of the app
+st.title("🤗 Live Transformer Demo")
+st.write("""
+    Welcome to the AD577 Transformer Demo! This app demonstrates a variety of Natural Language Processing (NLP) tasks 
+    using pre-trained transformer models from Hugging Face. Simply choose a task from the sidebar, enter your text, 
+    and click 'Run' to see the results.
+    
+    **Here’s what you can do with this app:**
+    - **Text Generation**: Automatically generate text based on a starting prompt.
+    - **Sentiment Analysis**: Determine if a given text expresses positive or negative sentiment.
+    - **Translation**: Translate text from English to French.
+    - **Summarization**: Generate a concise summary of a longer text.
+    - **Question Answering**: Provide a question and a context, and get an answer.
+    - **Zero-Shot Classification**: Classify text into labels without training on them.
+    - **Named Entity Recognition (NER)**: Detect people, places, and organizations in text.
+    
+    Explore each feature and see how powerful these NLP models are!
+""")
 
 # Sidebar for selecting the task
-task = st.sidebar.selectbox("Choose a task", ["Text Generation", "Sentiment Analysis", "Translation"])
+task = st.sidebar.selectbox("Choose a task", [
+    "Text Generation", 
+    "Sentiment Analysis", 
+    "Translation", 
+    "Summarization", 
+    "Question Answering", 
+    "Zero-Shot Classification", 
+    "Named Entity Recognition (NER)"
+])
 
-# Initialize the transformer model
+# Initialize the transformer model based on task
 @st.cache_resource
 def load_model(task_name):
     if task_name == "Text Generation":
@@ -27,8 +47,14 @@ def load_model(task_name):
         return pipeline("sentiment-analysis")
     elif task_name == "Translation":
         return pipeline("translation_en_to_fr")
-    else:
-        return None
+    elif task_name == "Summarization":
+        return pipeline("summarization", model="facebook/bart-large-cnn")
+    elif task_name == "Question Answering":
+        return pipeline("question-answering", model="distilbert-base-cased-distilled-squad")
+    elif task_name == "Zero-Shot Classification":
+        return pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
+    elif task_name == "Named Entity Recognition (NER)":
+        return pipeline("ner", grouped_entities=True)
 
 model = load_model(task)
 
@@ -54,5 +80,28 @@ if st.button("Run"):
                 translation = model(user_input)[0]["translation_text"]
                 st.success("Translation (English to French):")
                 st.write(translation)
+            elif task == "Summarization":
+                summary = model(user_input, max_length=130, min_length=30, do_sample=False)[0]["summary_text"]
+                st.success("Summary:")
+                st.write(summary)
+            elif task == "Question Answering":
+                context = st.text_area("Context", height=200)
+                question = st.text_input("Enter your question")
+                if st.button("Get Answer"):
+                    answer = model(question=question, context=context)["answer"]
+                    st.success("Answer:")
+                    st.write(answer)
+            elif task == "Zero-Shot Classification":
+                labels = st.text_input("Enter labels separated by commas (e.g., 'sports, politics, technology')")
+                candidate_labels = labels.split(",")
+                result = model(user_input, candidate_labels=candidate_labels)
+                st.success("Classification Result:")
+                st.write(result["labels"])
+                st.write(result["scores"])
+            elif task == "Named Entity Recognition (NER)":
+                entities = model(user_input)
+                st.success("Named Entities:")
+                for entity in entities:
+                    st.write(f"{entity['word']} ({entity['entity_group']}): {entity['score']:.4f}")
     else:
         st.error("Please enter some text.")

@@ -60,8 +60,6 @@ def load_model(task_name, target_language=None):
             return pipeline("translation_en_to_nl", model="Helsinki-NLP/opus-mt-en-nl")
         elif target_language == "Mandarin (Chinese)":
             return pipeline("translation_en_to_zh", model="Helsinki-NLP/opus-mt-en-zh")
-        elif target_language == "Cantonese (Traditional Chinese)":
-            return pipeline("translation_en_to_zh", model="Helsinki-NLP/opus-mt-en-zh")  # Shared model
         elif target_language == "Spanish":
             return pipeline("translation_en_to_es", model="Helsinki-NLP/opus-mt-en-es")
         elif target_language == "Portuguese":

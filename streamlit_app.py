@@ -5,7 +5,6 @@ from transformers import pipeline
 st.set_page_config(
     page_title="Live Transformer Demo",
     layout="wide",  # This will allow a wider layout for your app
-    initial_sidebar_state="expanded"
 )
 
 # Add an explanation of the app with title and markdown
@@ -15,9 +14,9 @@ st.markdown("""
     
     - 🚀 **Text Generation** for creative text.
     - 🔍 **Sentiment Analysis** for understanding opinions.
-    - 🌐 **Translation** across multiple languages, including Albanian, German, Russian, Hindi, French, Indonesian, Dutch, Mandarin (Chinese), Cantonese (Traditional Chinese), Spanish, and Portuguese.
+    - 🌐 **Translation** across multiple languages, including Albanian, German, Russian, Hindi, French, Indonesian, Dutch, Mandarin (Chinese), Spanish, and Portuguese.
 
-    Simply choose a task from the sidebar, enter your text, and click 'Run' to see the results!
+    Simply choose a task below, enter your text, and click 'Run' to see the results!
 """)
 
 # Two-column layout
@@ -26,15 +25,16 @@ col1, col2 = st.columns([2, 1])
 # Left column for input and task selection
 with col1:
     st.subheader("Start Exploring")
+    
+    # Task selection now in main body
     task = st.selectbox("Choose a task", ["Text Generation", "Sentiment Analysis", "Translation"])
 
-    # Sidebar for selecting translation language if translation is chosen
+    # Language selection shown only if "Translation" is chosen
     target_language = None
     if task == "Translation":
         target_language = st.selectbox("Select language", [
             "Albanian", "German", "Russian", "Hindi", "French", "Indonesian", 
-            "Dutch", "Mandarin (Chinese)", "Cantonese (Traditional Chinese)", 
-            "Spanish", "Portuguese"
+            "Dutch", "Mandarin (Chinese)", "Spanish", "Portuguese"
         ])
 
     # Text input from the user
@@ -64,8 +64,6 @@ with col1:
                 return pipeline("translation_en_to_nl", model="Helsinki-NLP/opus-mt-en-nl")
             elif target_language == "Mandarin (Chinese)":
                 return pipeline("translation_en_to_zh", model="Helsinki-NLP/opus-mt-en-zh")
-            elif target_language == "Cantonese (Traditional Chinese)":
-                return pipeline("translation_en_to_zh", model="Helsinki-NLP/opus-mt-en-zh")  # No separate Cantonese model available
             elif target_language == "Spanish":
                 return pipeline("translation_en_to_es", model="Helsinki-NLP/opus-mt-en-es")
             elif target_language == "Portuguese":
@@ -111,9 +109,5 @@ with col1:
 # Right column for adding visual elements
 with col2:
     st.image("https://huggingface.co/front/thumbnails/transformers.png", use_column_width=True)
-
-# Sidebar section
-st.sidebar.title("🔧 App Settings")
-st.sidebar.markdown("Select a task and language, then provide input to see the results.")
 
 

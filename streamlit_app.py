@@ -9,7 +9,7 @@ st.set_page_config(
 )
 
 # Add an explanation of the app
-st.title("🤗 Live Transformer Demo")
+st.title("🤗 AD577 Live Transformer Demo")
 st.write("""
     Welcome to the Live Transformer Demo! This app demonstrates three main NLP tasks using transformer models from Hugging Face:
     

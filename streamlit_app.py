@@ -59,10 +59,10 @@ col1, col2 = st.columns([2, 1])
 with col1:
     st.subheader("Start Exploring")
     
-    # Task selection now in main body
+    # Task selection
     task = st.selectbox("Choose a task", ["Sentiment Analysis", "Translation"])
 
-    # Language selection shown only if "Translation" is chosen
+    # Language selection for translation
     target_language = None
     if task == "Translation":
         target_language = st.selectbox("Select language", [
@@ -73,8 +73,8 @@ with col1:
     # Text input from the user
     user_input = st.text_area("Enter your text here:", height=150)
 
-    # Load the appropriate model based on the task and target language
-    @st.cache_resource
+    # Load the appropriate model with advanced caching
+    @st.cache_resource(ttl=24*3600, max_entries=10)
     def load_model(task_name, target_language=None):
         if task_name == "Sentiment Analysis":
             return pipeline("sentiment-analysis")
@@ -103,11 +103,11 @@ with col1:
     model = load_model(task, target_language)
 
     # Cache the results of each task to avoid re-computation
-    @st.cache_data
+    @st.cache_data(ttl=24*3600, max_entries=50)
     def analyze_sentiment(input_text):
         return model(input_text)
 
-    @st.cache_data
+    @st.cache_data(ttl=24*3600, max_entries=50)
     def translate_text(input_text):
         return model(input_text)[0]["translation_text"]
 
